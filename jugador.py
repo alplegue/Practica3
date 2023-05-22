@@ -212,6 +212,8 @@ class Display():
         self.cure_sprite = pygame.sprite.Group()  # Grupo de sprites de la cura
         self.zombie_sprite = pygame.sprite.Group() #Grupo de sprites del zombie
         pygame.init()  # Inicializa Pygame
+        pygame.mixer.music.load("música.mp3") #Cargamos la música del juego
+        pygame.mixer.music.play() #Le damos a play para que suene
             
             
     def drawCells(self):
