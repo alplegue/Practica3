@@ -95,7 +95,7 @@ class Cure(pygame.sprite.Sprite):
     
 class Cell():
     def __init__(self):
-        self.znumber = "?"
+        self.znumber = ""
         self.zombie_inside = None
         self.player_inside = None
         
@@ -128,20 +128,17 @@ class Cell():
         # Obtiene el número de zombies en la celda dada
         self.znumber = str(znumber)
     
-class Zombie():
-    def __init__(self, x, y):
-        self.x = x  # Establece la coordenada x del zombie
-        self.y = y  # Establece la coordenada y del zombie
 
-    def get_pos(self):
-        return (self.x, self.y)  # Obtiene la posición (x, y) del zombie
-
-    def set_pos(self, pos):
-        self.pos = pos  # Establece la posición (x, y) del zombie
-
-    def __str__(self):
-        return f"B<{self.x, self.y}>"  # Devuelve una representación en cadena del zombie"
-
+class Zombie(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.pos = [0, 0] # La posición inicial del zombie se establece como [0, 0]
+        self.image = pygame.image.load('zombie.png') # Se carga la imagen del zombie
+        self.rect = self.image.get_rect() # Se obtiene el rectángulo del sprite del zombie
+        
+    def update(self, pos):
+        self.rect.centerx = pos[0] * 70 + 48 # Establece la posición horizontal del sprite del zombie
+        self.rect.centery = pos[1] * 70  # Establece la posición vertical del sprite del zombie
         
     
 class Game():
@@ -149,10 +146,11 @@ class Game():
         self.cure_obtained = [False, False]    # Lista que almacena si cada jugador ha obtenido la cura
         self.player_caught = [False, False]  # Lista que almacena si cada jugador ha sido atrapado por un zombie
         self.players = [Player(i) for i in range(2)]     # Lista de jugadores, se crea un objeto Player para cada jugador
-        self.zombies = [Zombie(None, None) for i in range(NZOMBIES)]  # Lista de zombies, se crea un objeto Zombie para cada zombie
+        self.zombies = [Zombie() for i in range(NZOMBIES)]  # Lista de zombies, se crea un objeto Zombie para cada zombie
         self.running = True  # Variable que indica si el juego está en ejecución
         self.cells = [[Cell() for i in range(SIZE)] for i in range(SIZE)]  # Matriz de celdas, se crea un objeto Cell para cada celda
         self.cure = Cure()  # Objeto de cura
+        self.zombie = Zombie() #Objeto Zombie
 
     def get_player(self, number):
         return self.players[number]  # Obtiene el jugador con el número especificado
@@ -206,11 +204,13 @@ class Display():
             self.all_sprites.add(survivor)  # Agrega los sprites de los supervivientes al grupo de sprites de todos los elementos
             self.survivor_group.add(survivor)  # Agrega los sprites de los supervivientes al grupo de sprites de los supervivientes
         self.cure = game.cure  # Objeto de cura del juego
+        self.zombie = game.zombie #Objeto Zombie del juego
         self.cells = game.get_cells()  # Matriz de celdas del juego
         self.screen = pygame.display.set_mode(SIZE2)  # Crea la ventana del juego con el tamaño especificado
         self.clock = pygame.time.Clock()  # Reloj para controlar la velocidad de actualización
         self.background = pygame.image.load('background.png')  # Carga la imagen de fondo del juego desde un archivo
         self.cure_sprite = pygame.sprite.Group()  # Grupo de sprites de la cura
+        self.zombie_sprite = pygame.sprite.Group() #Grupo de sprites del zombie
         pygame.init()  # Inicializa Pygame
             
             
@@ -260,6 +260,7 @@ class Display():
     def refresh(self):
         self.screen.fill(BLACK)  # Llena la pantalla con el color negro
         self.all_sprites.update()  # Actualiza todos los sprites
+        self.screen.blit(self.background, (0, 0)) #Dibuja el fondo en la pantalla
         self.drawCells()  # Dibuja las celdas en la pantalla
         self.all_sprites.draw(self.screen)  # Dibuja todos los sprites en la pantalla
         font = pygame.font.Font(None, 100)  # Fuente para el texto
@@ -284,13 +285,19 @@ class Display():
                 self.screen.blit(text2, text_rect2)  # Muestra el texto en la pantalla
                 
         if self.game.player_caught[0]:
+            self.zombie.update(self.game.players[0].get_pos()) #Botiene la posicion del jugador atrapado
+            self.zombie_sprite.add(self.zombie) #Agrega el sprite del zombie al grupo de sprites del zombie
+            self.zombie_sprite.draw(self.screen) #Dibuja el sprite del zombie en pantalla
             text1 = font.render("PLAYER 1 DIED.", True, RED)  # Renderiza el texto "PLAYER 1 DIED." en rojo
             text_rect1 = text1.get_rect(center=(SIZE2[0] // 2, SIZE2[1] // 2 - 250))  # Calcula el rectángulo del texto centrado en la pantalla
             text2 = font.render("PLAYER 2 WINS", True, RED)  # Renderiza el texto "PLAYER 2 WINS" en rojo
             text_rect2 = text2.get_rect(center=(SIZE2[0] // 2, SIZE2[1] // 2 + 250))  # Calcula el rectángulo del texto centrado en la pantalla
             self.screen.blit(text1, text_rect1)  # Muestra el texto en la pantalla
             self.screen.blit(text2, text_rect2)  # Muestra el texto en la pantalla
-        if self.game.player_caught[1] or self.game.cure_obtained[0]:
+        if self.game.player_caught[1]:
+            self.zombie.update(self.game.players[1].get_pos()) #Botiene la posicion del jugador atrapado
+            self.zombie_sprite.add(self.zombie) #Agrega el sprite del zombie al grupo de sprites del zombie
+            self.zombie_sprite.draw(self.screen) #Dibuja el sprite del zombie en pantalla
             text1 = font.render("PLAYER 2 DIED.", True, RED)  # Renderiza el texto "PLAYER 2 DIED." en rojo
             text_rect1 = text1.get_rect(center=(SIZE2[0] // 2, SIZE2[1] // 2 - 250))  # Calcula el rectángulo del texto centrado en la pantalla
             text2 = font.render("PLAYER 1 WINS", True, RED)  # Renderiza el texto "PLAYER 1 WINS" en rojo

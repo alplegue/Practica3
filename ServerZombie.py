@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon May 15 20:37:42 2023
 
-@author: Alex
-"""
 
 from multiprocessing.connection import Listener
 from multiprocessing import Process, Manager, Value, Lock
@@ -27,9 +23,9 @@ class Player():
     def __init__(self, number):
         self.number = number
         if number == PLAYER_1:
-            self.pos = [0, 0]  # Inicializar la posición del jugador 1 en la esquina superior izquierda
+            self.pos = [0, 0] # Inicializar la posición del jugador 1 en la esquina superior izquierda
         else:
-            self.pos = [SIZE-1, SIZE-1]     # Inicializar la posición del jugador 2 en la esquina inferior derecha
+            self.pos = [SIZE-1, SIZE-1] # Inicializar la posición del jugador 2 en la esquina inferior derecha
     
     def get_pos(self):
         return self.pos
@@ -40,31 +36,31 @@ class Player():
     def moveUp(self):
         # Mueve al jugador hacia arriba disminuyendo la coordenada y
         if self.pos[1] == 0:
-            self.pos[1] = 0         # El jugador ya está en el borde superior, no puede moverse más arriba
+            self.pos[1] = 0 # El jugador ya está en el borde superior, no puede moverse más arriba
         else:
-            self.pos[1] -= 1        # Disminuir la coordenada y en 1 para mover al jugador hacia arriba
+            self.pos[1] -= 1 # Disminuir la coordenada y en 1 para mover al jugador hacia arriba
+
     def moveDown(self):
         # Mueve al jugador hacia abajo aumentando la coordenada y
         print(self.pos)
         if self.pos[1] == SIZE - 1:
-            self.pos[1] = SIZE - 1      # El jugador ya está en el borde inferior, no puede moverse más abajo
+            self.pos[1] = SIZE - 1  # El jugador ya está en el borde inferior, no puede moverse más abajo
         else:
-            self.pos[1] += 1        # Aumentar la coordenada y en 1 para mover al jugador hacia abajo
+            self.pos[1] += 1 # Aumentar la coordenada y en 1 para mover al jugador hacia abajo
     def moveLeft(self):
         # Mueve al jugador hacia la izquierda disminuyendo la coordenada x
         print(self.pos)
         if self.pos[0] == 0:
-            self.pos[0] = 0     # El jugador ya está en el borde izquierdo, no puede moverse más a la izquierda
+            self.pos[0] = 0 # El jugador ya está en el borde izquierdo, no puede moverse más a la izquierda
         else:
-            self.pos[0] -= 1        # Disminuir la coordenada x en 1 para mover al jugador hacia la izquierda
-        
+            self.pos[0] -= 1   # Disminuir la coordenada x en 1 para mover al jugador hacia la izquierda
     def moveRight(self):
         # Mueve al jugador hacia la derecha aumentando la coordenada x
         print(self.pos)
         if self.pos[0] == SIZE -1:
-            self.pos[0] = SIZE -1       # El jugador ya está en el borde derecho, no puede moverse más a la derecha
+            self.pos[0] = SIZE -1 # El jugador ya está en el borde derecho, no puede moverse más a la derecha
         else:
-            self.pos[0] += 1        # Aumentar la coordenada x en 1 para mover al jugador hacia la derecha
+            self.pos[0] += 1  # Aumentar la coordenada x en 1 para mover al jugador hacia la derecha
         
     
     def __str__(self):
@@ -73,12 +69,12 @@ class Player():
 
 class Zombie():
     def __init__(self, x, y):
-        # Inicializar la posición del zombie
+         # Inicializar la posición del zombie
         self.x = x
         self.y = y
         
     def get_pos(self):
-        return [self.x, self.y]
+        return ((self.x, self.y))
     
     def set_pos(self, x, y):
         self.x = x
@@ -86,7 +82,7 @@ class Zombie():
     
 class Cell():
     def __init__(self):
-        self.znumber = "?"     # Número de zombis cercanos (inicialmente desconocido)
+        self.znumber = ""  # Número de zombis cercanos (inicialmente desconocido)
         self.zombie_inside = None
         self.player_inside = None
         
@@ -99,7 +95,7 @@ class Cell():
         return self.zombie_inside != None
                 
     def put_zombie(self, zombie):
-        # Colocar un zombi dentro de la celda
+         # Colocar un zombi dentro de la celda
         self.zombie_inside = zombie
         
     def put_player(self, player):
@@ -125,21 +121,22 @@ class Game():
         self.cells = [[Cell() for i in range(SIZE)] for j in range(SIZE)]
         self.zombies = [Zombie(random.randint(0, SIZE - 1), random.randint(0, SIZE - 1)) for _ in range(NUMBER_OF_ZOMBIES)]
         self.cure = [random.randint(0, SIZE-1),random.randint(0, SIZE-1)]
+        while self.cure == [0, 0] or self.cure == [SIZE-1, SIZE-1]:
+            self.cure = self.cure = [random.randint(0, SIZE-1),random.randint(0, SIZE-1)]
         self.lista_pos = [(0,0),(SIZE-1, SIZE-1), (self.cure[0], self.cure[1])]
         
         # Asegurarse de que los zombis no se coloquen en posiciones ocupadas
         for zombie in self.zombies:
             while zombie.get_pos() in self.lista_pos: 
-                new_x, new_y = random.randint(0, SIZE-1), random.randit(0, SIZE-1)
+                new_x, new_y = random.randint(0, SIZE-1), random.randint(0, SIZE-1)
                 zombie.set_pos(new_x, new_y)
-            self.lista_pos += (zombie.get_pos()[0],zombie.get_pos()[1])
+            self.lista_pos.append((zombie.get_pos()[0],zombie.get_pos()[1]))
+         
                 
-        # Colocar los zombis en las celdas correspondientes
-
         self.running = Value('i', 1) #1 running
         self.lock = Lock()
 
-
+        # Colocar los zombis en las celdas correspondientes
         for zombie in self.zombies:
             self.cells[zombie.x][zombie.y].put_zombie(zombie)
         print(self.lista_pos)
@@ -226,21 +223,21 @@ class Game():
         x2, y2 = self.players[PLAYER_2].get_pos()[0],self.players[PLAYER_2].get_pos()[1]
         
         # Actualizar el número de zombis cercanos y el estado de la celda del jugador 1
-
+        
         if not self.cells[x1][y1].has_zombie():
             self.cells[x1][y1].update_znumber(self.zombies_nearby(x1,y1))
         else: 
             self.cells[x1][y1].update_znumber("Z")
-        
-        # Actualizar el número de zombis cercanos y el estado de la celda del jugador 2
-
+            
+         # Actualizar el número de zombis cercanos y el estado de la celda del jugador 2    
+            
         if not self.cells[x2][y2].has_zombie():
             self.cells[x2][y2].update_znumber(self.zombies_nearby(x2,y2))
         else: 
             self.cells[x2][y2].update_znumber("Z")
             
         # Construir el diccionario de información
-
+            
         info = {
             'player1_caught': self.is_player_caught(PLAYER_1),
             'player2_caught': self.is_player_caught(PLAYER_2),
@@ -256,7 +253,8 @@ class Game():
         }
         return info
     
-
+    
+    
 def player(number, conn, game):
         try:
             print(f"starting player {NUMSTR[number]}:{game.get_info()}")
@@ -282,6 +280,7 @@ def player(number, conn, game):
         finally:
             print(f"Game ended {game}")
 #Incializamos el prgograma solo si se conectan 2 jugadores
+    
 def main(ip_address):
     manager = Manager()
     try:
