@@ -12,14 +12,13 @@ El método get_info() en la clase Game se utiliza para obtener la información a
 
 El archivo "Jugador.py" es el código que se ejecuta en la computadora de cada jugador. Utiliza la biblioteca multiprocessing.connection para establecer una conexión con el servidor. El jugador interactúa con el juego a través de la interfaz gráfica con la biblioteca pygame. El jugador puede mover a su personaje con las teclas de dirección y debe evitar ser atrapado por los zombis.
 
-En el juego, los jugadores pueden ganar o perder según las siguientes condiciones:
+En el juego en sí es competitivo. Si un jugador pierde el otro gana. Aquí se establecen las reglas para que se den estas condiciones:
 
-Ganar:
+Un jugador gana si:
 
-Si ambos jugadores logran llegar a la casilla de la cura antes de que los zombis los atrapen, se considera una victoria para ambos jugadores.
+Logra conseguir la cura antes que su contrincante. Como ayuda, en cada casilla pisada tiene el número de zombies que rodean esta casilla. El jugador se puede mover arriba abajo, izauierda o derecha siempre que no se salga de los límites del tablero de juego.
 
-Perder:
+Un jugador pierde si:
 
-Si uno de los jugadores es capturado por un zombi antes de llegar a la casilla de la cura, ese jugador pierde.
-Si ambos jugadores son capturados por los zombis antes de llegar a la casilla de la cura, se considera una derrota para ambos jugadores.
-En resumen, los jugadores ganan si ambos logran llegar a la casilla de la cura antes de ser atrapados por los zombis, y pierden si uno o ambos jugadores son capturados por los zombis antes de llegar a la casilla de la cura.
+Si uno de los jugadores es capturado por un zombi antes de llegar a la casilla de la cura.
+Si el jugador adversario consigue la cura antes que él.
