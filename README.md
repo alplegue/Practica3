@@ -1,6 +1,6 @@
 # Practica4
 
-El código proporcionado consta de dos archivos: "Servidor.py" y "Jugador.py". Estos archivos implementan un juego en el que dos jugadores intentan evitar ser atrapados por zombis.
+El código proporcionado consta de dos archivos .py, imágenes y música de fondo para el jueggo. "Servidor.py" y "Jugador.py" implementan un juego en el que dos jugadores intentan evitar ser atrapados por zombis.
 
 El archivo "Servidor.py" contiene la lógica del juego y se encarga de administrar la comunicación entre los jugadores. Utiliza la biblioteca multiprocessing para crear procesos independientes para cada jugador. Aquí se define la clase Player, que representa a un jugador en el juego, y la clase Zombie, que representa a un zombi. También se definen las clases Cell y Game para administrar las celdas y el estado del juego.
 
